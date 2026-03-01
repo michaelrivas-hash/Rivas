@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#271C14">
+<title>RIVAS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cutive+Mono&family=Raleway:wght@200;300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --C:#271C14; --A:#F6F1E8; --W:#FCF9F4; --A2:#EDE7DA;
+  --C6:rgba(39,28,20,.6); --C3:rgba(39,28,20,.3); --C1:rgba(39,28,20,.1);
+  --B:rgba(39,28,20,.14); --B2:rgba(39,28,20,.22);
+  --RED:#8B2020; --GREEN:#3A6B47; --ORANGE:#B87333;
+  --ff:'Raleway',sans-serif; --fm:'Cutive Mono',monospace; --fs:'Cormorant Garamond',serif;
+  --st:env(safe-area-inset-top,0px); --sb:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;font-family:var(--fm);background:var(--C);color:var(--C);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;overscroll-behavior:none;}
+
+/* ══ AUTH ══ */
+.auth{position:fixed;inset:0;background:var(--C);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 28px;padding-top:calc(var(--st) + 32px);padding-bottom:calc(var(--sb) + 32px);z-index:9000;transition:opacity .3s;}
+.auth.gone{opacity:0;pointer-events:none;}
+.auth-logo{text-align:center;margin-bottom:48px;}
+.r-mark{width:64px;height:64px;background:var(--A);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+.r-mark span{font-family:var(--ff);font-weight:200;font-size:2.4rem;color:var(--C);letter-spacing:4px;padding-left:7px;line-height:1;user-select:none;}
+.r-wordmark{font-family:var(--ff);font-weight:300;font-size:.5rem;letter-spacing:7px;text-transform:uppercase;color:rgba(246,241,232,.38);}
+.auth-sep{width:32px;height:1px;background:rgba(246,241,232,.16);margin:24px auto;}
+.auth-step-title{font-family:var(--fm);font-size:.56rem;letter-spacing:3px;text-transform:uppercase;color:rgba(246,241,232,.38);text-align:center;margin-bottom:20px;}
+.auth-desc{font-family:var(--fm);font-size:.72rem;color:rgba(246,241,232,.45);text-align:center;line-height:1.9;margin-bottom:22px;}
+.auth-desc strong{color:rgba(246,241,232,.8);}
+.auth-inp{width:100%;background:rgba(246,241,232,.05);border:none;border-bottom:1px solid rgba(246,241,232,.22);color:var(--A);padding:13px 4px;font-family:var(--fm);font-size:1rem;letter-spacing:1px;margin-bottom:4px;outline:none;-webkit-appearance:none;transition:border-color .2s;text-align:center;}
+.auth-inp:focus{border-bottom-color:rgba(246,241,232,.6);}
+.auth-inp::placeholder{color:rgba(246,241,232,.22);font-size:.72rem;letter-spacing:1.5px;}
+.otp-row{display:flex;gap:9px;justify-content:center;margin:10px 0 4px;}
+.otp-d{width:46px;height:56px;background:rgba(246,241,232,.05);border:none;border-bottom:2px solid rgba(246,241,232,.2);color:var(--A);font-family:var(--fs);font-size:1.8rem;font-weight:300;text-align:center;outline:none;-webkit-appearance:none;transition:border-color .2s;}
+.otp-d:focus{border-bottom-color:rgba(246,241,232,.65);}
+.auth-btn{width:100%;padding:14px;background:var(--A);border:none;color:var(--C);font-family:var(--ff);font-weight:700;font-size:.58rem;letter-spacing:4px;text-transform:uppercase;cursor:pointer;margin-top:18px;transition:all .18s;-webkit-appearance:none;}
+.auth-btn:active{opacity:.8;transform:scale(.99);}
+.auth-btn.sec{background:none;border:1px solid rgba(246,241,232,.18);color:rgba(246,241,232,.5);margin-top:9px;}
+.auth-err{font-family:var(--fm);font-size:.62rem;color:#C05040;text-align:center;min-height:18px;margin-top:7px;letter-spacing:.5px;}
+.auth-ok{font-family:var(--fs);font-size:2rem;font-weight:300;color:var(--A);text-align:center;margin-top:14px;letter-spacing:4px;line-height:1.3;}
+.auth-hint{font-family:var(--fm);font-size:.52rem;color:rgba(246,241,232,.2);text-align:center;margin-top:20px;line-height:2.1;}
+.auth-hint a{color:rgba(246,241,232,.4);cursor:pointer;text-decoration:none;}
+.spin-w{display:inline-block;width:11px;height:11px;border:1.5px solid rgba(246,241,232,.18);border-top-color:var(--A);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:7px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ══ APP SHELL ══ */
+#app{display:none;flex-direction:column;height:100vh;height:-webkit-fill-available;background:var(--A);overflow:hidden;}
+#app.on{display:flex;}
+.topbar{background:var(--C);padding:calc(var(--st) + 10px) 16px 10px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:1px solid rgba(246,241,232,.06);}
+.tb-logo{display:flex;align-items:center;gap:8px;}
+.tb-r{width:26px;height:26px;background:var(--A);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tb-r span{font-family:var(--ff);font-weight:200;font-size:.95rem;color:var(--C);letter-spacing:2px;padding-left:3px;line-height:1;}
+.tb-name{font-family:var(--ff);font-weight:300;font-size:.5rem;letter-spacing:5px;text-transform:uppercase;color:rgba(246,241,232,.45);}
+.tb-ctx{font-family:var(--ff);font-weight:500;font-size:.52rem;letter-spacing:2px;text-transform:uppercase;color:rgba(246,241,232,.65);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tb-av{width:28px;height:28px;border:1px solid rgba(246,241,232,.22);display:flex;align-items:center;justify-content:center;font-family:var(--ff);font-weight:700;font-size:.58rem;letter-spacing:.5px;color:rgba(246,241,232,.65);cursor:pointer;flex-shrink:0;}
+.proj-bar{background:var(--C);display:flex;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid rgba(246,241,232,.07);flex-shrink:0;}
+.proj-bar::-webkit-scrollbar{display:none;}
+.pt{flex-shrink:0;padding:9px 15px;font-family:var(--ff);font-weight:400;font-size:.48rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(246,241,232,.32);border:none;background:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.pt.on{color:var(--A);border-bottom-color:rgba(246,241,232,.5);}
+.pt-add{flex-shrink:0;padding:9px 11px;font-size:.85rem;color:rgba(246,241,232,.22);border:none;background:none;cursor:pointer;}
+.bnav{background:var(--C);display:flex;border-top:1px solid rgba(246,241,232,.07);flex-shrink:0;padding-bottom:var(--sb);}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:9px 2px 7px;border:none;background:none;cursor:pointer;gap:3px;-webkit-tap-highlight-color:transparent;}
+.nb-ic{font-size:1.05rem;line-height:1;opacity:.3;transition:all .2s;}
+.nb-lb{font-family:var(--ff);font-weight:500;font-size:.37rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(246,241,232,.25);transition:all .2s;}
+.nb.on .nb-ic{opacity:.95;color:var(--A);}
+.nb.on .nb-lb{color:rgba(246,241,232,.7);}
+.nb.prv .nb-ic{opacity:.18;}
+.nb.prv .nb-lb{color:rgba(246,241,232,.15);}
+.nb.prv.on .nb-ic{opacity:.6;}
+
+/* ══ PAGES ══ */
+main{flex:1;overflow:hidden;position:relative;}
+.pg{position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden;background:var(--A);}
+.pg.on{display:flex;}
+.pg-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+
+/* ══ PAGE HEADER ══ */
+.ph{padding:16px 16px 12px;background:var(--W);border-bottom:1px solid var(--B);flex-shrink:0;}
+.ph-ey{font-family:var(--fm);font-size:.48rem;letter-spacing:3px;text-transform:uppercase;color:var(--C3);margin-bottom:2px;}
+.ph-ti{font-family:var(--ff);font-weight:700;font-size:1.05rem;letter-spacing:4px;text-transform:uppercase;color:var(--C);}
+.ph-ti span{opacity:.35;font-weight:300;}
+.ph-ac{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap;}
+
+/* ══ BUTTONS ══ */
+.btn{font-family:var(--ff);font-weight:700;font-size:.46rem;letter-spacing:2.5px;text-transform:uppercase;padding:9px 16px;border:1px solid var(--C);background:var(--C);color:var(--A);cursor:pointer;transition:all .15s;-webkit-appearance:none;}
+.btn:active{opacity:.8;}
+.btn-o{background:none;color:var(--C);}
+.btn-g{background:var(--GREEN);border-color:var(--GREEN);}
+.btn-sm{padding:7px 11px;font-size:.42rem;}
+
+/* ══ CARDS & ITEMS ══ */
+.card{background:var(--W);border:1px solid var(--B);margin:8px 14px;padding:13px 13px;}
+.card-t{font-family:var(--ff);font-weight:600;font-size:.8rem;letter-spacing:.5px;color:var(--C);margin-bottom:3px;}
+.card-s{font-family:var(--fm);font-size:.58rem;color:var(--C3);letter-spacing:.5px;}
+.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;}
+.tag{font-family:var(--fm);font-size:.48rem;padding:2px 6px;border:1px solid var(--B2);color:var(--C3);}
+.tag.r{color:var(--RED);border-color:var(--RED);}
+.tag.g{color:var(--GREEN);border-color:var(--GREEN);}
+.tag.o{color:var(--ORANGE);border-color:var(--ORANGE);}
+.sec-h{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 8px;border-bottom:1px solid var(--B);background:var(--A2);flex-shrink:0;}
+.sec-t{font-family:var(--ff);font-weight:700;font-size:.5rem;letter-spacing:3px;text-transform:uppercase;color:var(--C);}
+.sec-add{font-family:var(--fm);font-size:.55rem;color:var(--C3);background:none;border:none;cursor:pointer;padding:3px 6px;}
+
+/* ══ STATS ══ */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--B);margin:12px 14px;border:1px solid var(--B);}
+.stat-c{background:var(--W);padding:13px 12px;}
+.sl{font-family:var(--fm);font-size:.46rem;letter-spacing:2px;text-transform:uppercase;color:var(--C3);margin-bottom:4px;}
+.sv{font-family:var(--fs);font-size:2.1rem;font-weight:300;line-height:1;}
+.sv.g{color:var(--GREEN);} .sv.r{color:var(--RED);} .sv.o{color:var(--ORANGE);}
+.sn{font-family:var(--fm);font-size:.48rem;color:var(--C3);margin-top:2px;}
+
+/* ══ GANTT ══ */
+.gantt-wrap{display:flex;flex:1;overflow:hidden;}
+.gl{width:124px;min-width:124px;background:var(--W);border-right:1px solid var(--B);overflow-y:auto;-webkit-overflow-scrolling:touch;flex-shrink:0;}
+.gr{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;}
+.gl-row{display:flex;align-items:center;gap:5px;padding:5px 8px;border-bottom:1px solid rgba(39,28,20,.07);min-height:30px;}
+.gl-row.ph{background:var(--A2);border-bottom:1px solid var(--B);}
+.gdot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.gdot.done{background:var(--GREEN);}
+.gdot.inprogress{background:var(--ORANGE);animation:bl 2s infinite;}
+.gdot.todo{background:var(--B2);}
+.gdot.risk{background:var(--RED);animation:bl 1s infinite;}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.2}}
+.gl-n{font-family:var(--ff);font-size:.58rem;font-weight:400;color:var(--C);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;}
+.gl-ph{font-family:var(--ff);font-weight:700;font-size:.42rem;letter-spacing:2px;text-transform:uppercase;}
+.g-bar-row{height:30px;display:flex;align-items:center;border-bottom:1px solid rgba(39,28,20,.06);position:relative;}
+.g-bar-row.ph{height:24px;background:rgba(246,241,232,.5);border-bottom:1px solid var(--B);}
+.gbar{position:absolute;height:20px;top:5px;display:flex;align-items:center;padding:0 5px;overflow:hidden;cursor:pointer;}
+.gbar-fill{position:absolute;left:0;top:0;bottom:0;background:rgba(255,255,255,.14);}
+.gbar-lbl{font-family:var(--fm);font-size:.48rem;color:#fff;white-space:nowrap;position:relative;z-index:1;letter-spacing:.3px;}
+.g-today{position:absolute;top:0;bottom:0;width:1px;background:var(--C);opacity:.28;z-index:10;pointer-events:none;}
+
+/* ══ TASK ITEMS ══ */
+.ti{display:flex;align-items:flex-start;gap:9px;padding:11px 14px;border-bottom:1px solid var(--B);background:var(--W);cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.ti:active{background:var(--A2);}
+.ti-stripe{width:2px;flex-shrink:0;align-self:stretch;min-height:12px;}
+.ti-body{flex:1;min-width:0;}
+.ti-name{font-family:var(--ff);font-weight:500;font-size:.8rem;color:var(--C);margin-bottom:2px;}
+.ti-meta{font-family:var(--fm);font-size:.56rem;color:var(--C3);letter-spacing:.5px;}
+.ti-pct{font-family:var(--fs);font-size:1.15rem;font-weight:300;color:var(--C3);line-height:1;flex-shrink:0;}
+
+/* ══ COMPTE RENDU ══ */
+.cr-dh{padding:14px 14px 10px;background:var(--W);border-bottom:1px solid var(--B);}
+.cr-lg{display:flex;align-items:baseline;gap:8px;}
+.cr-r{font-family:var(--ff);font-weight:300;font-size:1.25rem;letter-spacing:8px;text-transform:uppercase;color:var(--C);}
+.cr-a{font-family:var(--ff);font-weight:300;font-size:.38rem;letter-spacing:4px;text-transform:uppercase;color:var(--C3);}
+.cr-m{font-family:var(--fm);font-size:.58rem;color:var(--C3);margin-top:5px;line-height:1.8;}
+.rida{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;font-family:var(--ff);font-weight:700;font-size:.5rem;}
+.rida.D{background:var(--C);color:var(--A);} .rida.A{background:var(--GREEN);color:#fff;} .rida.I{background:var(--ORANGE);color:#fff;}
+.sl-item{padding:11px 14px;border-bottom:1px solid var(--B);background:var(--W);display:flex;gap:8px;align-items:flex-start;}
+.sl-body{flex:1;}
+.sl-theme{font-family:var(--ff);font-weight:700;font-size:.58rem;letter-spacing:1px;color:var(--C);margin-bottom:1px;}
+.sl-det{font-family:var(--fm);font-size:.64rem;color:var(--C6);line-height:1.65;}
+.sl-det.urg{color:var(--RED);}
+.resp-tag{font-family:var(--fm);font-size:.48rem;padding:1px 5px;background:var(--A);border:1px solid var(--B2);color:var(--C6);display:inline-block;margin-top:3px;}
+
+/* ══ COMMANDES ══ */
+.cmd-card{background:var(--W);border:1px solid var(--B);border-left:3px solid var(--B2);margin:8px 14px;padding:12px 13px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.cmd-card:active{opacity:.8;}
+.cmd-card.att{border-left-color:var(--ORANGE);} .cmd-card.liv{border-left-color:var(--GREEN);} .cmd-card.ret{border-left-color:var(--RED);}
+.cmd-n{font-family:var(--ff);font-weight:600;font-size:.78rem;color:var(--C);margin-bottom:2px;}
+.cmd-i{font-family:var(--fm);font-size:.58rem;color:var(--C3);margin-bottom:5px;}
+.cmd-st{display:inline-block;font-family:var(--fm);font-size:.46rem;letter-spacing:1.5px;text-transform:uppercase;padding:2px 6px;border:1px solid;}
+.cmd-st.cmd{color:var(--C3);border-color:var(--B2);} .cmd-st.att{color:var(--ORANGE);border-color:var(--ORANGE);} .cmd-st.liv{color:var(--GREEN);border-color:var(--GREEN);} .cmd-st.ret{color:var(--RED);border-color:var(--RED);}
+
+/* ══ MA JOURNÉE ══ */
+.dy-ch{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:var(--A2);border-bottom:1px solid var(--B);}
+.dy-cl{font-family:var(--ff);font-weight:700;font-size:.48rem;letter-spacing:3px;text-transform:uppercase;}
+.dy-cl.u{color:var(--RED);} .dy-cl.i{color:var(--ORANGE);} .dy-cl.m{color:var(--C6);} .dy-cl.w{color:var(--C3);}
+.dy-cnt{font-family:var(--fm);font-size:.54rem;color:var(--C3);}
+.dt-i{display:flex;align-items:flex-start;gap:8px;padding:10px 14px;border-bottom:1px solid var(--B);background:var(--W);}
+.dt-ck{width:17px;height:17px;border:1px solid var(--B2);flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.68rem;transition:all .15s;}
+.dt-ck.d{background:var(--GREEN);border-color:var(--GREEN);color:#fff;}
+.dt-ck.w{background:var(--ORANGE);border-color:var(--ORANGE);color:#fff;}
+.dt-tx{font-family:var(--fm);font-size:.72rem;flex:1;line-height:1.55;}
+.dt-tx.x{text-decoration:line-through;color:var(--C3);}
+.dt-nt{font-family:var(--fm);font-size:.58rem;color:var(--C3);font-style:italic;margin-top:2px;}
+.dt-del{background:none;border:none;color:var(--C3);font-size:.82rem;cursor:pointer;padding:0 3px;flex-shrink:0;opacity:.4;}
+.add-row{display:flex;align-items:center;border-top:1px dashed var(--B);background:var(--W);}
+.add-row input{flex:1;background:none;border:none;padding:10px 13px;font-family:var(--fm);font-size:.72rem;color:var(--C);outline:none;}
+.add-row input::placeholder{color:var(--C3);font-size:.62rem;font-style:italic;}
+.add-row-btn{background:none;border:none;color:var(--C3);font-size:1.1rem;padding:7px 11px;cursor:pointer;}
+
+/* ══ AI ══ */
+.ai-zone{background:var(--W);border:1px solid var(--B);margin:10px 14px;padding:14px;}
+.ai-lbl{font-family:var(--fm);font-size:.46rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--C3);margin-bottom:7px;}
+.ai-ta{width:100%;background:var(--A);border:1px solid var(--B);color:var(--C);padding:10px 11px;font-family:var(--fm);font-size:.72rem;line-height:1.7;resize:none;min-height:76px;outline:none;-webkit-appearance:none;}
+.ai-btns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.ai-out{display:none;margin-top:11px;background:var(--C);padding:14px 14px;}
+.ai-out-h{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.ai-badge{font-family:var(--fm);font-size:.42rem;letter-spacing:2px;text-transform:uppercase;color:rgba(246,241,232,.32);border:1px solid rgba(246,241,232,.14);padding:2px 6px;}
+.ai-title{font-family:var(--ff);font-weight:600;font-size:.78rem;letter-spacing:3px;text-transform:uppercase;color:var(--A);}
+.ai-text{font-family:var(--fm);font-size:.66rem;line-height:1.9;color:rgba(246,241,232,.65);white-space:pre-wrap;}
+
+/* ══ FORMS ══ */
+.fg{display:flex;flex-direction:column;gap:3px;margin-bottom:10px;}
+.fg label{font-family:var(--fm);font-size:.46rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--C3);}
+.fg input,.fg select,.fg textarea{background:var(--A);border:1px solid var(--B);color:var(--C);padding:10px 10px;font-family:var(--fm);font-size:.78rem;-webkit-appearance:none;outline:none;resize:vertical;width:100%;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--C6);}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+
+/* ══ BOTTOM SHEET ══ */
+.overlay{position:fixed;inset:0;background:rgba(39,28,20,.6);z-index:500;display:none;align-items:flex-end;}
+.overlay.on{display:flex;}
+.sheet{background:var(--W);width:100%;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--sb) + 16px);animation:su .24s cubic-bezier(.32,.72,0,1);}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheet-handle{width:34px;height:4px;background:rgba(39,28,20,.13);border-radius:2px;margin:10px auto 14px;}
+.sheet-title{font-family:var(--ff);font-weight:700;font-size:.88rem;letter-spacing:4px;text-transform:uppercase;color:var(--C);padding:0 18px 13px;border-bottom:1px solid var(--B);margin-bottom:14px;}
+.sheet-body{padding:0 18px;}
+.sheet-close{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--C3);font-size:.95rem;cursor:pointer;}
+
+/* ══ ACCOUNT SLIDE ══ */
+.am-bg{position:fixed;inset:0;background:rgba(39,28,20,.5);z-index:600;display:none;}
+.am-bg.on{display:block;}
+.am-panel{position:fixed;top:0;right:0;bottom:0;width:min(280px,88vw);background:var(--C);z-index:601;transform:translateX(100%);transition:transform .28s cubic-bezier(.32,.72,0,1);display:flex;flex-direction:column;padding-top:calc(var(--st) + 14px);padding-bottom:calc(var(--sb) + 14px);}
+.am-panel.on{transform:translateX(0);}
+.am-head{padding:14px 18px 18px;border-bottom:1px solid rgba(246,241,232,.08);margin-bottom:6px;}
+.am-av{width:40px;height:40px;background:var(--A);display:flex;align-items:center;justify-content:center;font-family:var(--ff);font-weight:700;font-size:.95rem;color:var(--C);margin-bottom:9px;}
+.am-name{font-family:var(--ff);font-weight:400;font-size:.78rem;letter-spacing:1px;color:var(--A);}
+.am-email{font-family:var(--fm);font-size:.56rem;color:rgba(246,241,232,.38);margin-top:2px;}
+.am-role{display:inline-block;margin-top:7px;padding:2px 8px;border:1px solid rgba(246,241,232,.16);font-family:var(--fm);font-size:.46rem;letter-spacing:2px;text-transform:uppercase;color:rgba(246,241,232,.4);}
+.am-item{display:flex;align-items:center;gap:11px;padding:12px 18px;font-family:var(--fm);font-size:.66rem;color:rgba(246,241,232,.5);cursor:pointer;transition:all .14s;border:none;background:none;width:100%;text-align:left;}
+.am-item:hover{background:rgba(246,241,232,.05);color:var(--A);}
+.am-item.danger{color:rgba(190,80,60,.8);}
+.am-item.danger:hover{color:#C05040;}
+
+/* ══ PHOTO LIGHTBOX ══ */
+.ph-lb{position:fixed;inset:0;background:rgba(39,28,20,.93);z-index:9999;display:none;align-items:center;justify-content:center;cursor:zoom-out;}
+.ph-lb.on{display:flex;}
+.ph-lb img{max-width:96vw;max-height:96vh;object-fit:contain;}
+
+/* ══ MISC ══ */
+.empty{font-family:var(--fm);font-size:.58rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--C3);text-align:center;padding:18px;}
+.sp{display:inline-block;width:9px;height:9px;border:1.5px solid rgba(246,241,232,.18);border-top-color:var(--A);border-radius:50%;animation:spin .7s linear infinite;}
+.sp-d{display:inline-block;width:9px;height:9px;border:1.5px solid rgba(39,28,20,.14);border-top-color:var(--C);border-radius:50%;animation:spin .7s linear infinite;}
+::-webkit-scrollbar{display:none;}
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  const EJS_KEY      = 'VOTRE_PUBLIC_KEY';
+  const EJS_SERVICE  = 'VOTRE_SERVICE_ID';
+  const EJS_TEMPLATE = 'VOTRE_TEMPLATE_ID';
+  (function(){ try{ if(EJS_KEY!=='VOTRE_PUBLIC_KEY') emailjs.init({publicKey:EJS_KEY}); }catch(e){} })();
+</script>
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     AUTH — ÉTAPE 1 : EMAIL
+══════════════════════════════════════ -->
+<div class="auth" id="auth-email">
+  <div class="auth-logo">
+    <div class="r-mark"><span>R</span></div>
+    <div class="r-wordmark">architecture</div>
+  </div>
+  <div class="auth-sep"></div>
+  <div class="auth-step-title">Connexion</div>
+  <div class="auth-desc">Saisissez votre adresse e-mail.<br>Vous recevrez un <strong>code à 6 chiffres</strong>.</div>
+  <input type="email" class="auth-inp" id="email-inp" placeholder="votre@email.com" autocomplete="email" inputmode="email" onkeydown="if(event.key==='Enter')sendOTP()">
+  <div class="auth-err" id="email-err"></div>
+  <button class="auth-btn" id="email-btn" onclick="sendOTP()">Continuer →</button>
+  <div class="auth-hint">Première connexion — accès permanent une fois validé.<br>Révocation uniquement par l'administrateur.</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     AUTH — ÉTAPE 2 : CODE OTP
+══════════════════════════════════════ -->
+<div class="auth gone" id="auth-otp">
+  <div class="auth-logo">
+    <div class="r-mark"><span>R</span></div>
+    <div class="r-wordmark">architecture</div>
+  </div>
+  <div class="auth-sep"></div>
+  <div class="auth-step-title">Code de vérification</div>
+  <div class="auth-desc" id="otp-desc">Saisissez le code affiché ci-dessous<br><strong id="otp-email-shown" style="font-size:.65rem;opacity:.5"></strong></div>
+  <div class="otp-row">
+    <input type="tel" maxlength="1" class="otp-d" oninput="otpNav(this,0)" onkeydown="otpKey(event,0)">
+    <input type="tel" maxlength="1" class="otp-d" oninput="otpNav(this,1)" onkeydown="otpKey(event,1)">
+    <input type="tel" maxlength="1" class="otp-d" oninput="otpNav(this,2)" onkeydown="otpKey(event,2)">
+    <input type="tel" maxlength="1" class="otp-d" oninput="otpNav(this,3)" onkeydown="otpKey(event,3)">
+    <input type="tel" maxlength="1" class="otp-d" oninput="otpNav(this,4)" onkeydown="otpKey(event,4)">
+    <input type="tel" maxlength="1" class="otp-d" oninput="otpNav(this,5)" onkeydown="otpKey(event,5)">
+  </div>
+  <div class="auth-err" id="otp-err"></div>
+  <div class="auth-ok" id="otp-ok"></div>
+  <button class="auth-btn" id="otp-btn" onclick="verifyOTP()">Confirmer</button>
+  <button class="auth-btn sec" onclick="backToEmail()">← Modifier l'adresse</button>
+  <div class="auth-hint"><a onclick="resendOTP()">Générer un nouveau code</a><br><span id="resend-count"></span></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     APP
+══════════════════════════════════════ -->
+<div id="app">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="tb-logo">
+      <div class="tb-r"><span>R</span></div>
+      <div class="tb-name">RIVAS</div>
+    </div>
+    <div class="tb-ctx" id="tb-ctx">—</div>
+    <div class="tb-av" id="tb-av" onclick="openAM()">—</div>
+  </div>
+
+  <!-- PROJECT TABS -->
+  <div class="proj-bar" id="proj-bar">
+    <button class="pt-add" id="pt-add-btn" onclick="openSheet('projSheet')" title="Nouveau chantier">+</button>
+  </div>
+
+  <!-- PAGES -->
+  <main>
+
+    <!-- ── PLANNING ── -->
+    <div class="pg on" id="pg-plan">
+      <div class="ph">
+        <div class="ph-ey">01 / PROJET</div>
+        <div class="ph-ti">Planning <span>Général</span></div>
+        <div class="ph-ac">
+          <button class="btn btn-sm" onclick="setZoom(24,this)">Sem</button>
+          <button class="btn btn-sm btn-o" onclick="setZoom(14,this)">Mois</button>
+          <button class="btn btn-sm" onclick="openAddTask()">+ Tâche</button>
+        </div>
+      </div>
+      <div class="gantt-wrap" id="gantt-wrap">
+        <div class="gl" id="gtL"></div>
+        <div class="gr" id="gtR"></div>
+      </div>
+    </div>
+
+    <!-- ── TÂCHES ── -->
+    <div class="pg" id="pg-tasks">
+      <div class="ph"><div class="ph-ey">02 / CHANTIER</div><div class="ph-ti">Tâches <span>& Suivi</span></div><div class="ph-ac"><button class="btn btn-sm" onclick="openAddTask()">+ Tâche</button></div></div>
+      <div class="pg-scroll">
+        <div class="stat-grid" id="task-stats"></div>
+        <div id="task-list"></div>
+      </div>
+    </div>
+
+    <!-- ── COMPTE RENDU ── -->
+    <div class="pg" id="pg-cr">
+      <div class="pg-scroll">
+        <div class="cr-dh">
+          <div class="cr-lg"><span class="cr-r">RIVAS</span><span class="cr-a">architecture</span></div>
+          <div class="cr-m" id="cr-meta">—</div>
+          <div style="display:flex;gap:6px;margin-top:9px;flex-wrap:wrap;">
+            <button class="btn btn-sm" onclick="aiExtract()"><span class="sp" id="sp-ext" style="display:none"></span><span id="ext-t">Extraire tâches</span></button>
+            <button class="btn btn-sm btn-o" onclick="aiGenCR()"><span class="sp-d" id="sp-cr" style="display:none"></span><span id="cr-t">Générer CR</span></button>
+            <button class="btn btn-sm btn-o" onclick="sendCR()">✉ Envoyer</button>
+          </div>
+        </div>
+        <div class="ai-zone">
+          <div class="ai-lbl">Notes brutes de réunion</div>
+          <textarea class="ai-ta" id="cr-notes" placeholder="Notes par lot, entreprise, actions, décisions..."></textarea>
+          <div class="ai-btns">
+            <button class="btn btn-sm btn-o" onclick="aiRisks()"><span class="sp-d" id="sp-rk" style="display:none"></span><span id="rk-t">Risques</span></button>
+          </div>
+          <div class="ai-out" id="cr-ai-out"><div class="ai-out-h"><div class="ai-badge">Claude IA</div><div class="ai-title" id="cr-ai-tit">Analyse</div></div><div class="ai-text" id="cr-ai-txt"></div></div>
+        </div>
+        <div class="sec-h"><span class="sec-t">Intervenants</span><button class="sec-add" onclick="openSheet('membSheet')">+</button></div>
+        <div id="cr-int"></div>
+        <div class="sec-h"><span class="sec-t">Statut Projet — RIDA</span><button class="sec-add" onclick="openSheet('statSheet')">+</button></div>
+        <div id="cr-stat"></div>
+        <div class="sec-h"><span class="sec-t">Éléments Clefs</span><button class="sec-add" onclick="openSheet('clefSheet')">+</button></div>
+        <div id="cr-clefs"></div>
+        <div style="padding:14px 14px;border-top:1px solid var(--B);font-family:var(--fm);font-size:.5rem;color:var(--C3);text-align:center;line-height:2">SARL TRI · 3 Rue de Parme 75009 Paris<br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="88ebe7e6fce9ebfcc8e9efede6ebedfcfae1a6ebe7e5">[email&#160;protected]</a> · 01 48 74 82 11</div>
+      </div>
+    </div>
+
+    <!-- ── COMMANDES ── -->
+    <div class="pg" id="pg-cmd">
+      <div class="ph"><div class="ph-ey">04 / FOURNITURES</div><div class="ph-ti">Suivi <span>Commandes</span></div><div class="ph-ac" id="cmd-add-area"><button class="btn btn-sm" onclick="openSheet('cmdSheet')">+ Commande</button></div></div>
+      <div class="pg-scroll" id="cmd-list"></div>
+    </div>
+
+    <!-- ── MA JOURNÉE (privée) ── -->
+    <div class="pg" id="pg-day">
+      <div class="ph"><div class="ph-ey">PRIVÉ</div><div class="ph-ti">Ma <span>Journée</span></div><div class="ph-ac"><button class="btn btn-sm" onclick="openSheet('qdaySheet')">+ Tâche</button></div></div>
+      <div class="pg-scroll">
+        <div style="padding:12px 14px 6px;font-family:var(--ff);font-weight:300;font-size:1.1rem;letter-spacing:2px;text-transform:uppercase;color:var(--C);opacity:.7" id="day-date"></div>
+        <div style="padding:0 14px 12px;font-family:var(--fm);font-size:.56rem;letter-spacing:1px;color:var(--C3)" id="day-proj"></div>
+        <div id="day-urgent"></div>
+        <div id="day-important"></div>
+        <div id="day-marie"></div>
+        <div id="day-waiting"></div>
+        <div class="ai-zone">
+          <div class="ai-lbl">Organiser mes priorités via IA</div>
+          <textarea class="ai-ta" id="day-in" style="min-height:66px" placeholder="Dictez vos priorités du matin..."></textarea>
+          <div class="ai-btns">
+            <button class="btn btn-sm" onclick="aiDay()"><span class="sp" id="sp-day" style="display:none"></span><span id="day-btn">Organiser</span></button>
+            <button class="btn btn-sm btn-o" onclick="aiDaySumm()">Bilan IA</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SYNTHÈSE IA ── -->
+    <div class="pg" id="pg-ai">
+      <div class="ph"><div class="ph-ey">05 / ANALYSE</div><div class="ph-ti">Synthèse <span>IA</span></div><div class="ph-ac"><button class="btn btn-sm" onclick="genReport()"><span class="sp" id="sp-rp" style="display:none"></span><span id="rp-t">Analyser</span></button></div></div>
+      <div class="pg-scroll">
+        <div class="stat-grid" id="ai-stats"></div>
+        <div style="background:var(--W);border:1px solid var(--B);margin:10px 14px;padding:13px 14px;">
+          <div style="font-family:var(--fm);font-size:.46rem;letter-spacing:2px;text-transform:uppercase;color:var(--C3);margin-bottom:9px">⚠ Tâches à risque</div>
+          <div id="rk-list"></div>
+        </div>
+        <div class="ai-out on" id="ai-main-out" style="display:block;margin:10px 14px;">
+          <div class="ai-out-h"><div class="ai-badge">Claude IA</div><div class="ai-title">Synthèse Hebdomadaire</div></div>
+          <div class="ai-text" id="ai-body">Cliquez sur "Analyser" pour la synthèse IA complète du chantier.</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- BOTTOM NAV -->
+  <div class="bnav">
+    <button class="nb on" onclick="nav('plan',this)"><div class="nb-ic">◫</div><div class="nb-lb">Planning</div></button>
+    <button class="nb" onclick="nav('tasks',this)"><div class="nb-ic">☰</div><div class="nb-lb">Tâches</div></button>
+    <button class="nb" onclick="nav('cr',this)"><div class="nb-ic">◻</div><div class="nb-lb">CR</div></button>
+    <button class="nb" onclick="nav('cmd',this)"><div class="nb-ic">◈</div><div class="nb-lb">Commandes</div></button>
+    <button class="nb prv" id="nb-day" onclick="nav('day',this)"><div class="nb-ic">✦</div><div class="nb-lb">Ma Journée</div></button>
+    <button class="nb" onclick="nav('ai',this)"><div class="nb-ic">◎</div><div class="nb-lb">IA</div></button>
+  </div>
+
+</div><!-- /app -->
+
+<!-- ══ ACCOUNT MENU ══ -->
+<div class="am-bg" id="am-bg" onclick="closeAM()"></div>
+<div class="am-panel" id="am-panel">
+  <div class="am-head">
+    <div class="am-av" id="am-av">—</div>
+    <div class="am-name" id="am-name">—</div>
+    <div class="am-email" id="am-email">—</div>
+    <div class="am-role" id="am-role">—</div>
+  </div>
+  <button class="am-item" onclick="nav('day',document.getElementById('nb-day'));closeAM()"><span>✦</span> Ma Journée</button>
+  <button class="am-item" id="am-admin-btn" style="display:none" onclick="openSheet('adminSheet');closeAM()"><span>⚙</span> Administration</button>
+  <div style="flex:1"></div>
+  <button class="am-item danger" onclick="doLogout()"><span>↩</span> Déconnexion</button>
+</div>
+
+<!-- ══ BOTTOM SHEETS ══ -->
+
+<!-- Nouvelle tâche -->
+<div class="overlay" id="taskSheet" onclick="if(event.target===this)closeSheet('taskSheet')">
+  <div class="sheet" style="position:relative">
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" onclick="closeSheet('taskSheet')">✕</button>
+    <div class="sheet-title" id="task-sheet-t">Nouvelle Tâche</div>
+    <div class="sheet-body">
+      <div class="fg"><label>Intitulé</label><input type="text" id="t-n" placeholder="Ex: Coulage dalle niveau 1"></div>
+      <div class="f2"><div class="fg"><label>Lot</label><select id="t-cat"><option>Gros Oeuvre</option><option>Second Oeuvre</option><option>Électricité</option><option>Plomberie</option><option>Menuiserie</option><option>Finitions</option><option>VRD</option><option>Autre</option></select></div><div class="fg"><label>Assigné</label><select id="t-asgn"><option value="">—</option></select></div></div>
+      <div class="f2"><div class="fg"><label>Début</label><input type="date" id="t-s"></div><div class="fg"><label>Fin</label><input type="date" id="t-e"></div></div>
+      <div class="f2"><div class="fg"><label>Statut</label><select id="t-st"><option value="todo">À Faire</option><option value="inprogress">En Cours</option><option value="done">Réalisé</option></select></div><div class="fg"><label>% avancement</label><input type="number" id="t-pct" min="0" max="100" value="0"></div></div>
+      <div class="fg"><label>Notes</label><textarea id="t-notes" rows="2"></textarea></div>
+      <button class="btn" style="width:100%;margin-top:4px" onclick="saveTask()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Intervenant -->
+<div class="overlay" id="membSheet" onclick="if(event.target===this)closeSheet('membSheet')">
+  <div class="sheet" style="position:relative">
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" onclick="closeSheet('membSheet')">✕</button>
+    <div class="sheet-title">Intervenant</div>
+    <div class="sheet-body">
+      <div class="f2"><div class="fg"><label>Prénom Nom</label><input type="text" id="m-n"></div><div class="fg"><label>Corps de métier</label><input type="text" id="m-r"></div></div>
+      <div class="f2"><div class="fg"><label>Entreprise</label><input type="text" id="m-c"></div><div class="fg"><label>Téléphone</label><input type="tel" id="m-t"></div></div>
+      <div class="fg"><label>E-mail</label><input type="email" id="m-e"></div>
+      <div class="f2"><div class="fg"><label>Rôle</label><select id="m-tp"><option>Maître d'ouvrage</option><option>Maître d'œuvre</option><option>Entreprise</option><option>Bureau de contrôle</option></select></div><div class="fg"><label>Présence</label><select id="m-pr"><option value="1">Présent</option><option value="0">Absent</option></select></div></div>
+      <button class="btn" style="width:100%;margin-top:4px" onclick="saveMemb()">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<!-- Ligne Statut -->
+<div class="overlay" id="statSheet" onclick="if(event.target===this)closeSheet('statSheet')">
+  <div class="sheet" style="position:relative">
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" onclick="closeSheet('statSheet')">✕</button>
+    <div class="sheet-title">Ligne Statut Projet</div>
+    <div class="sheet-body">
+      <div class="f2"><div class="fg"><label>RIDA</label><select id="st-r"><option value="D">D — Décision</option><option value="A">A — Action</option><option value="I">I — Information</option></select></div><div class="fg"><label>Thème / Lot</label><input type="text" id="st-th"></div></div>
+      <div class="fg"><label>Détail</label><textarea id="st-det" rows="3"></textarea></div>
+      <div class="f2"><div class="fg"><label>Date</label><input type="date" id="st-dt"></div><div class="fg"><label>Responsable</label><select id="st-rsp"><option value="">—</option></select></div></div>
+      <div class="fg"><label>Urgence</label><select id="st-urg"><option value="0">Normal</option><option value="1">Urgent</option></select></div>
+      <div class="fg"><label>Photos</label><input type="file" id="st-ph" accept="image/*" multiple style="font-family:var(--fm);font-size:.7rem;color:var(--C6)"></div>
+      <button class="btn" style="width:100%;margin-top:4px" onclick="saveStat()">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<!-- Point Clef -->
+<div class="overlay" id="clefSheet" onclick="if(event.target===this)closeSheet('clefSheet')">
+  <div class="sheet" style="position:relative">
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" onclick="closeSheet('clefSheet')">✕</button>
+    <div class="sheet-title">Point Clef</div>
+    <div class="sheet-body">
+      <div class="fg"><label>Référence</label><input type="text" id="cl-ref" placeholder="Ex: 12.12"></div>
+      <div class="fg"><label>Description</label><textarea id="cl-txt" rows="3"></textarea></div>
+      <div class="fg"><label>Urgence</label><select id="cl-urg"><option value="0">Normal</option><option value="1">Urgent</option></select></div>
+      <button class="btn" style="width:100%;margin-top:4px" onclick="saveClef()">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<!-- Commande -->
+<div class="overlay" id="cmdSheet" onclick="if(event.target===this)closeSheet('cmdSheet')">
+  <div class="sheet" style="position:relative">
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" onclick="closeSheet('cmdSheet')">✕</button>
+    <div class="sheet-title">Nouvelle Commande</div>
+    <div class="sheet-body">
+      <div class="f2"><div class="fg"><label>Désignation</label><input type="text" id="cmd-n"></div><div class="fg"><label>Lot</label><input type="text" id="cmd-lot"></div></div>
+      <div class="f2"><div class="fg"><label>Fournisseur</label><input type="text" id="cmd-f"></div><div class="fg"><label>Devis HT €</label><input type="number" id="cmd-dv" placeholder="0"></div></div>
+      <div class="f2"><div class="fg"><label>Payé</label><select id="cmd-pd"><option value="0">Non</option><option value="1">Acompte</option><option value="2">Soldé</option></select></div><div class="fg"><label>Livraison</label><input type="date" id="cmd-dl"></div></div>
+      <div class="f2"><div class="fg"><label>Statut</label><select id="cmd-st"><option value="cmd">Commandé</option><option value="att">En attente</option><option value="liv">Livré</option><option value="ret">Retard</option></select></div><div class="fg"><label>Réceptionnaire</label><select id="cmd-rcp"><option value="">—</option></select></div></div>
+      <div class="fg"><label>Commentaire</label><textarea id="cmd-cm" rows="2"></textarea></div>
+      <button class="btn" style="width:100%;margin-top:4px" onclick="saveCmd()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Nouveau projet -->
+<div class="overlay" id="projSheet" onclick="if(event.target===this)closeSheet('projSheet')">
+  <div class="sheet" style="position:relative">
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" onclick="closeSheet('projSheet')">✕</button>
+    <div class="sheet-title">Nouveau Chantier</div>
+    <div class="sheet-body">
+      <div class="fg"><label>Nom du projet</label><input type="text" id="p-n"></div>
+      <div class="f2"><div class="fg"><label>Phase</label><select id="p-ph"><option>Gros Oeuvre</option><option>Second Oeuvre</option><option>Finitions</option><option>VRD</option></select></div><div class="fg"><label>Avancement %</label><input type="number" id="p-pct" value="0" min="0" max="100"></div></div>
+      <div class="fg"><label>E-mail client (accès lecture)</label><input type="email" id="p-client" placeholder="client@exemple.com"></div>
+      <div class="fg"><label>E-mails partenaires (séparés par virgule)</label><textarea id="p-partners" rows="2" placeholder="partner@x.com, bureau@y.fr"></textarea></div>
+      <button class="btn" style="width:100%;margin-top:4px" onclick="saveProj()">Créer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Tâche perso -->
+<div class="overlay" id="qdaySheet" onclick="if(event.target===this)closeSheet('qdaySheet')">
+  <div class="sheet" style="position:relative">
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" onclick="closeSheet('qdaySheet')">✕</button>
+    <div class="sheet-title">Tâche personnelle</div>
+    <div class="sheet-body">
+      <div class="f2"><div class="fg"><label>Catégorie</label><select id="qd-cat"><option value="urgent">Urgent</option><option value="important">Important</option><option value="marie">Marie</option><option value="waiting">En attente</option></select></div><div class="fg"><label>Garder si réalisé</label><select id="qd-keep"><option value="0">Non</option><option value="1">Oui</option></select></div></div>
+      <div class="fg"><label>Description</label><textarea id="qd-txt" rows="2"></textarea></div>
+      <button class="btn" style="width:100%;margin-top:4px" onclick="saveQday()">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<!-- Administration (admin uniquement) -->
+<div class="overlay" id="adminSheet" onclick="if(event.target===this)closeSheet('adminSheet')">
+  <div class="sheet" style="position:relative">
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" onclick="closeSheet('adminSheet')">✕</button>
+    <div class="sheet-title">Administration</div>
+    <div class="sheet-body">
+      <div style="font-family:var(--fm);font-size:.56rem;letter-spacing:1px;color:var(--C3);margin-bottom:14px;">Gestion des accès utilisateurs</div>
+      <div id="admin-users"></div>
+      <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--B)">
+        <div style="font-family:var(--fm);font-size:.5rem;letter-spacing:2px;text-transform:uppercase;color:var(--C3);margin-bottom:10px">Inviter un nouvel utilisateur</div>
+        <div class="fg"><label>Adresse e-mail</label><input type="email" id="inv-email" placeholder="nouveau@exemple.com"></div>
+        <div class="fg"><label>Rôle</label><select id="inv-role"><option value="equipe">Équipe Rivas</option><option value="client">Client</option><option value="partenaire">Partenaire</option></select></div>
+        <div class="fg"><label>Projet (si client/partenaire)</label><select id="inv-proj"><option value="">— Tous —</option></select></div>
+        <button class="btn" style="width:100%;margin-top:4px" onclick="inviteUser()">Inviter</button>
+        <div id="inv-ok" style="font-family:var(--fm);font-size:.6rem;color:var(--GREEN);text-align:center;margin-top:8px;display:none"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ph-lb" id="phLb" onclick="this.classList.remove('on')"><img id="phLbImg" src=""></div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ══════════════════════════════════════════════════
+//  AUTH — EMAIL OTP
+// ══════════════════════════════════════════════════
+
+// Team emails — global access
+const TEAM_EMAILS = ['contact@agencetri.com','michael.rivas@agencetri.com'];
+
+// Persistent sessions (localStorage)
+// users: [{email, role, projIdx:null|number, since, active:true}]
+function getUsers(){try{return JSON.parse(localStorage.getItem('rv_users')||'[]');}catch{return [];}}
+function saveUsers(u){localStorage.setItem('rv_users',JSON.stringify(u));}
+function getSession(){try{return JSON.parse(localStorage.getItem('rv_session')||'null');}catch{return null;}}
+function saveSession(s){if(s)localStorage.setItem('rv_session',JSON.stringify(s));else localStorage.removeItem('rv_session');}
+
+let _otpEmail='', _otpCode='', _resendTimer=null, _resendLeft=0;
+
+async function sendOTP(){
+  const email=document.getElementById('email-inp').value.trim().toLowerCase();
+  const err=document.getElementById('email-err');
+  const btn=document.getElementById('email-btn');
+  err.textContent='';
+  if(!email||!email.includes('@')){err.textContent='Adresse e-mail invalide.';return;}
+
+  const users=getUsers();
+  const existing=users.find(u=>u.email===email);
+  if(existing&&!existing.active){err.textContent='Accès révoqué. Contactez l'administrateur.';return;}
+
+  _otpCode=String(Math.floor(100000+Math.random()*900000));
+  _otpEmail=email;
+
+  btn.innerHTML='<span class="spin-w"></span>';
+  btn.disabled=true;
+  await new Promise(r=>setTimeout(r,700));
+  btn.innerHTML='Continuer';
+  btn.disabled=false;
+
+  document.getElementById('otp-email-shown').textContent=email;
+  document.getElementById('otp-ok').textContent='';
+  document.getElementById('otp-err').textContent='';
+  document.getElementById('auth-email').classList.add('gone');
+  setTimeout(()=>{
+    document.getElementById('auth-otp').classList.remove('gone');
+    document.querySelector('.otp-d').focus();
+    // Code affiché directement à l'écran
+    document.getElementById('otp-ok').textContent='Votre code : ' + _otpCode;
+    startResendTimer();
+  },300);
+}
+
+function otpNav(el,idx){
+  const digits=document.querySelectorAll('.otp-d');
+  if(el.value&&idx<5)digits[idx+1].focus();
+  if(document.querySelectorAll('.otp-d:not([value=""])').length===0&&[...digits].every(d=>d.value.length===1)){
+    verifyOTP();
+  }
+}
+function otpKey(e,idx){
+  const digits=document.querySelectorAll('.otp-d');
+  if(e.key==='Backspace'&&!digits[idx].value&&idx>0){digits[idx-1].focus();digits[idx-1].value='';}
+  if(e.key==='Enter')verifyOTP();
+}
+
+function verifyOTP(){
+  const digits=document.querySelectorAll('.otp-d');
+  const entered=[...digits].map(d=>d.value).join('');
+  const err=document.getElementById('otp-err');
+  err.textContent='';
+
+  if(entered.length!==6){err.textContent='Saisissez les 6 chiffres.';return;}
+  if(entered!==_otpCode){err.textContent='Code incorrect. Vérifiez et réessayez.';return;}
+
+  // Valid — create/update user & session
+  const users=getUsers();
+  let user=users.find(u=>u.email===_otpEmail);
+  const role=TEAM_EMAILS.includes(_otpEmail)?'equipe':(user?.role||'client');
+
+  if(!user){
+    user={email:_otpEmail,role,projIdx:null,since:Date.now(),active:true};
+    users.push(user);
+  }
+  saveUsers(users);
+
+  const session={email:_otpEmail,role,projIdx:user.projIdx,since:Date.now()};
+  saveSession(session);
+
+  // Flash success
+  document.getElementById('otp-ok').textContent='✓ Identité vérifiée — Accès permanent activé.';
+  document.getElementById('otp-btn').disabled=true;
+
+  setTimeout(()=>launchApp(session),1200);
+}
+
+function backToEmail(){
+  document.getElementById('auth-otp').classList.add('gone');
+  setTimeout(()=>document.getElementById('auth-email').classList.remove('gone'),300);
+  document.querySelectorAll('.otp-d').forEach(d=>d.value='');
+  if(_resendTimer)clearInterval(_resendTimer);
+}
+
+async async function resendOTP(){
+  _otpCode=String(Math.floor(100000+Math.random()*900000));
+  document.getElementById('otp-ok').textContent='Votre code : ' + _otpCode;
+  startResendTimer();
+}
+
+function startResendTimer(){
+  _resendLeft=60;
+  const el=document.getElementById('resend-count');
+  if(_resendTimer)clearInterval(_resendTimer);
+  _resendTimer=setInterval(()=>{
+    _resendLeft--;
+    if(_resendLeft>0){el.textContent=`(renvoyer dans ${_resendLeft}s)`;}
+    else{el.textContent='';clearInterval(_resendTimer);}
+  },1000);
+}
+
+function doLogout(){
+  saveSession(null);
+  closeAM();
+  document.getElementById('app').classList.remove('on');
+  document.getElementById('auth-email').classList.remove('gone');
+  document.getElementById('auth-otp').classList.add('gone');
+  document.getElementById('email-inp').value='';
+  document.querySelectorAll('.otp-d').forEach(d=>d.value='');
+  document.getElementById('otp-btn').disabled=false;
+  document.getElementById('otp-err').textContent='';
+  document.getElementById('otp-ok').textContent='';
+}
+
+// ══════════════════════════════════════════════════
+//  DATA — par projet (pi = project index)
+// ══════════════════════════════════════════════════
+const CC={'Gros Oeuvre':'#4A6B8A','Second Oeuvre':'#6B5A8A','Électricité':'#3A6B47','Plomberie':'#8B3A3A','Menuiserie':'#8B6914','Finitions':'#2A6B6B','VRD':'#4A4A4A','Autre':'#7A6A5A'};
+
+let S={
+  dw:24, curP:0,
+  projects:[
+    {name:'MATCHPLAY',phase:'Second Oeuvre',pct:58,clientEmails:['matchplay@client.com'],partnerEmails:[]},
+    {name:'Résidence Les Pins',phase:'Gros Oeuvre',pct:68,clientEmails:['lespins@client.com'],partnerEmails:[]},
+    {name:'Villa Moderna',phase:'Finitions',pct:91,clientEmails:['moderna@client.com'],partnerEmails:[]},
+  ],
+  tasks:[
+    {id:1,pi:0,name:'Terrassement & préparation',cat:'Gros Oeuvre',assignee:'WORLDBAT',status:'done',start:'2025-02-01',end:'2025-02-14',pct:100},
+    {id:2,pi:0,name:'Fondations & semelles',cat:'Gros Oeuvre',assignee:'WORLDBAT',status:'done',start:'2025-02-10',end:'2025-02-28',pct:100},
+    {id:3,pi:0,name:'Réseaux EU/EP sous-sol',cat:'Plomberie',assignee:'JEAN LUCY',status:'done',start:'2025-02-24',end:'2025-03-12',pct:100},
+    {id:4,pi:0,name:'Élévation murs RDC',cat:'Gros Oeuvre',assignee:'WORLDBAT',status:'done',start:'2025-03-05',end:'2025-03-26',pct:100},
+    {id:5,pi:0,name:'Câbles électriques RDC',cat:'Électricité',assignee:'DANELEC',status:'done',start:'2025-03-18',end:'2025-04-03',pct:100},
+    {id:6,pi:0,name:'Coulage dalle niveau 1',cat:'Gros Oeuvre',assignee:'WORLDBAT',status:'done',start:'2025-03-25',end:'2025-04-08',pct:100},
+    {id:7,pi:0,name:'Coffrage niveau 2',cat:'Gros Oeuvre',assignee:'WORLDBAT',status:'inprogress',start:'2025-04-25',end:'2025-05-15',pct:62},
+    {id:8,pi:0,name:'Câbles élec niveau 1',cat:'Électricité',assignee:'DANELEC',status:'inprogress',start:'2025-04-29',end:'2025-05-19',pct:48},
+    {id:9,pi:0,name:'Réseau plomberie N1',cat:'Plomberie',assignee:'JEAN LUCY',status:'inprogress',start:'2025-05-02',end:'2025-05-22',pct:28},
+    {id:10,pi:0,name:'Tableau électrique',cat:'Électricité',assignee:'DANELEC',status:'todo',start:'2025-05-19',end:'2025-06-02',pct:0,risk:true},
+    {id:11,pi:0,name:'Cloisons niveau 1',cat:'Second Oeuvre',assignee:'WORLDBAT',status:'todo',start:'2025-05-22',end:'2025-06-13',pct:0,risk:true},
+    {id:12,pi:0,name:'Menuiseries extérieures',cat:'Menuiserie',assignee:'M.O.',status:'todo',start:'2025-06-02',end:'2025-06-23',pct:0},
+    {id:13,pi:0,name:'Peintures & finitions',cat:'Finitions',assignee:'WORLDBAT',status:'todo',start:'2025-07-01',end:'2025-08-01',pct:0},
+    {id:14,pi:1,name:'Terrassement',cat:'VRD',assignee:'EXTERIORS',status:'done',start:'2025-01-10',end:'2025-01-28',pct:100},
+    {id:15,pi:1,name:'Fondations béton armé',cat:'Gros Oeuvre',assignee:'BATIPRO',status:'done',start:'2025-01-25',end:'2025-02-22',pct:100},
+    {id:16,pi:1,name:'Élévation R+1',cat:'Gros Oeuvre',assignee:'BATIPRO',status:'inprogress',start:'2025-02-25',end:'2025-04-15',pct:75},
+    {id:17,pi:1,name:'Dalle béton R+1',cat:'Gros Oeuvre',assignee:'BATIPRO',status:'inprogress',start:'2025-04-10',end:'2025-04-30',pct:30},
+    {id:18,pi:1,name:'Charpente toiture',cat:'Menuiserie',assignee:'ARTBOIS',status:'todo',start:'2025-05-05',end:'2025-05-28',pct:0},
+    {id:19,pi:2,name:'Peintures intérieures',cat:'Finitions',assignee:'COLOREX',status:'inprogress',start:'2025-03-01',end:'2025-04-15',pct:82},
+    {id:20,pi:2,name:'Cuisine — pose',cat:'Menuiserie',assignee:'KITCH+',status:'inprogress',start:'2025-03-20',end:'2025-04-10',pct:65},
+    {id:21,pi:2,name:'Plomberie cuisine',cat:'Plomberie',assignee:'AQUAPRO',status:'done',start:'2025-02-05',end:'2025-03-10',pct:100},
+    {id:22,pi:2,name:'Nettoyage & réception',cat:'Autre',assignee:'TRI',status:'todo',start:'2025-04-15',end:'2025-04-22',pct:0},
+  ],
+  milestones:[
+    {id:1,pi:0,name:'Réception gros oeuvre',date:'2025-05-26'},
+    {id:2,pi:0,name:'Hors d\'eau / Hors d\'air',date:'2025-06-23'},
+    {id:3,pi:0,name:'Livraison MATCHPLAY',date:'2025-09-01'},
+    {id:4,pi:1,name:'Hors d\'eau',date:'2025-06-20'},
+    {id:5,pi:2,name:'Livraison Villa Moderna',date:'2025-04-30'},
+  ],
+  members:[
+    {id:1,pi:0,name:'M. Rivas',role:'Architecte',company:'SARL TRI',tel:'01 48 74 82 11',email:'contact@agencetri.com',type:'Maître d\'œuvre',present:true,invited:true},
+    {id:2,pi:0,name:'M. Romito',role:'Maçonnerie',company:'WORLDBAT',tel:'06 19 02 78 89',email:'contact.worldbat@gmail.com',type:'Entreprise',present:true,invited:true},
+    {id:3,pi:0,name:'M. Bagneux',role:'Plombier',company:'JEAN LUCY',tel:'01 45 83 48 46',email:'contact@jeanlucv.com',type:'Entreprise',present:true,invited:true},
+    {id:4,pi:0,name:'M. Zaffran',role:'Électricien',company:'DANELEC',tel:'06 09 78 61 41',email:'direction@dan-elec.fr',type:'Entreprise',present:true,invited:true},
+    {id:5,pi:0,name:'M. Bittan',role:'Climatisation',company:'CLIMADANE',tel:'01 48 07 19 19',email:'bureau.etude@climadane.com',type:'Entreprise',present:false,invited:true,absent:true},
+    {id:6,pi:1,name:'M. Rivas',role:'Architecte',company:'SARL TRI',type:'Maître d\'œuvre',email:'contact@agencetri.com',present:true,invited:true},
+    {id:7,pi:1,name:'M. Durif',role:'Maçon',company:'BATIPRO',type:'Entreprise',email:'contact@batipro.fr',present:true,invited:true},
+    {id:8,pi:2,name:'M. Rivas',role:'Architecte',company:'SARL TRI',type:'Maître d\'œuvre',email:'contact@agencetri.com',present:true,invited:true},
+  ],
+  statLines:[
+    {id:1,pi:0,rida:'D',theme:'Chape',detail:'Chapes Experts le 04.02. Site fermé jusqu\'au 08.02.',date:'03.02',resp:'CHAPES EXPERTS',urgent:false,photos:[]},
+    {id:2,pi:0,rida:'A',theme:'Commandes',detail:'Robinetterie & électroménager — confirmer références urgence.',date:'03.02',resp:'M.O.',urgent:true,photos:[]},
+    {id:3,pi:0,rida:'I',theme:'Peinture',detail:'Échantillons posés. Validation prochaine réunion.',date:'03.02',resp:'WORLDBAT',urgent:false,photos:[]},
+    {id:4,pi:1,rida:'D',theme:'Fondations',detail:'Béton armé coffré — coulage semaine 12.',date:'10.03',resp:'BATIPRO',urgent:false,photos:[]},
+    {id:5,pi:2,rida:'A',theme:'Finitions',detail:'Validation teinte peinture salon.',date:'15.03',resp:'COLOREX',urgent:true,photos:[]},
+  ],
+  clefs:[
+    {id:1,pi:0,ref:'12.12',text:'Commande robinetterie urgente',urgent:true},
+    {id:2,pi:0,ref:'19.12',text:'Fournir références électroménager cuisine',urgent:true},
+    {id:3,pi:1,ref:'01.03',text:'Valider plan toiture avec charpentier',urgent:false},
+  ],
+  commandes:[
+    {id:1,pi:0,name:'Robinetterie cuisine',lot:'Plomberie',fournisseur:'Grohe',devis:4200,paid:0,delivery:'2025-06-15',status:'cmd',recept:'M. Bagneux',comment:'Modèle Euromix E³',photos:[],photoComment:''},
+    {id:2,pi:0,name:'Carrelage sol RDC',lot:'Finitions',fournisseur:'Porcelaingres',devis:8600,paid:1,delivery:'2025-07-01',status:'att',recept:'M. Romito',comment:'Format 120×120',photos:[],photoComment:''},
+    {id:3,pi:0,name:'Néons baies de golf',lot:'Électricité',fournisseur:'Nedgis',devis:1800,paid:0,delivery:'2025-06-10',status:'cmd',recept:'M. Zaffran',comment:'',photos:[],photoComment:''},
+    {id:4,pi:2,name:'Cuisine Bulthaup',lot:'Menuiserie',fournisseur:'Bulthaup Paris',devis:38000,paid:1,delivery:'2025-04-01',status:'liv',recept:'Mme Dupont',comment:'Livrée et posée',photos:[],photoComment:''},
+  ],
+  dayTasks:{
+    urgent:[{id:'d1',text:'Rappeler Gaillard — électricien',done:false,keep:false,note:''},{id:'d2',text:'Showroom Tourtoulou 3D',done:false,keep:false,note:''}],
+    important:[{id:'d3',text:'Planches revêtements Marie',done:false,keep:false,note:''},{id:'d4',text:'Réponses maison et objet',done:false,keep:false,note:''}],
+    marie:[{id:'d5',text:'Dossier InDesign à finaliser',done:false,keep:false,note:''}],
+    waiting:[{id:'d6',text:'French Founder subscription',done:false,keep:true,note:'Relancé le 01.03'},{id:'d7',text:'Commande AirPod — livraison',done:false,keep:true,note:''}]
+  },
+  reports:[], curCmdId:null, nid:300,
+};
+
+// ══ SESSION & ROLE ══
+let CUR_SESSION=null;
+
+function launchApp(session){
+  CUR_SESSION=session;
+  const isClient=session.role==='client'||session.role==='partenaire';
+  const isAdmin=TEAM_EMAILS.includes(session.email);
+
+  // Hide auth
+  document.getElementById('auth-email').classList.add('gone');
+  document.getElementById('auth-otp').classList.add('gone');
+  document.getElementById('app').classList.add('on');
+
+  // Account menu
+  const ini=s=>s.split(/[\s@.]/)[0].slice(0,2).toUpperCase();
+  document.getElementById('tb-av').textContent=ini(session.email);
+  document.getElementById('am-av').textContent=ini(session.email);
+  document.getElementById('am-name').textContent=session.email.split('@')[0].replace(/\./g,' ');
+  document.getElementById('am-email').textContent=session.email;
+  document.getElementById('am-role').textContent={{equipe:'Équipe Rivas',client:'Client',partenaire:'Partenaire'}[session.role]||session.role};
+  if(isAdmin)document.getElementById('am-admin-btn').style.display='flex';
+
+  // Restrict nav for clients
+  if(isClient){
+    document.getElementById('nb-day').style.display='none';
+    document.getElementById('cmd-add-area').style.display='none';
+    document.getElementById('pt-add-btn').style.display='none';
+    // Restrict to their project
+    if(session.projIdx!==null&&session.projIdx!==undefined)S.curP=session.projIdx;
+  }
+
+  // Set project context
+  if(session.projIdx!==null&&!isAdmin)S.curP=session.projIdx||0;
+
+  // Day date
+  document.getElementById('day-date').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'long'}).toUpperCase();
+
+  renderAll();
+  renderProjBar();
+  renderDT();
+}
+
+// ══ FILTERS ══
+const pT=()=>S.tasks.filter(t=>t.pi===S.curP);
+const pM=()=>S.members.filter(m=>m.pi===S.curP);
+const pMs=()=>S.milestones.filter(m=>m.pi===S.curP);
+const pSL=()=>S.statLines.filter(l=>l.pi===S.curP);
+const pC=()=>S.clefs.filter(c=>c.pi===S.curP);
+const pCmd=()=>S.commandes.filter(c=>c.pi===S.curP);
+const fd=d=>{if(!d)return'—';return new Date(d).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});};
+const ini=s=>(s||'?').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+
+// ══ NAVIGATION ══
+function nav(id,btn){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('pg-'+id).classList.add('on');
+  btn.classList.add('on');
+  if(id==='cr')renderCR();
+  if(id==='cmd')renderCmds();
+  if(id==='ai')updateStats();
+  if(id==='tasks')renderTaskList();
+  document.getElementById('tb-ctx').textContent=S.projects[S.curP]?.name||'—';
+}
+
+// ══ PROJECT BAR ══
+function renderProjBar(){
+  const isClient=CUR_SESSION?.role==='client'||CUR_SESSION?.role==='partenaire';
+  const bar=document.getElementById('proj-bar');
+  const projs=isClient?[S.projects[S.curP]]:S.projects;
+  const offset=isClient?S.curP:0;
+  let h=projs.map((p,ii)=>{
+    const i=isClient?S.curP:ii;
+    return `<button class="pt${S.curP===i?' on':''}" onclick="selP(${i})">${p.name}</button>`;
+  }).join('');
+  if(!isClient)h+=`<button class="pt-add" onclick="openSheet('projSheet')">+</button>`;
+  bar.innerHTML=h;
+  document.getElementById('tb-ctx').textContent=S.projects[S.curP]?.name||'—';
+  document.getElementById('day-proj').textContent=`${S.projects[S.curP]?.name||'—'} · ${S.projects[S.curP]?.phase||'—'}`;
+}
+
+function selP(i){
+  const isClient=CUR_SESSION?.role==='client';
+  if(isClient)return;
+  S.curP=i;
+  renderProjBar();
+  renderAll();
+}
+
+// ══ GANTT ══
+let days=[];
+function buildDays(){
+  const tasks=pT(),ms=pMs();
+  if(!tasks.length&&!ms.length){days=[];return;}
+  const ds=[...tasks.flatMap(t=>[new Date(t.start),new Date(t.end)]),...ms.map(m=>new Date(m.date))];
+  let mn=new Date(Math.min(...ds)),mx=new Date(Math.max(...ds));
+  mn.setDate(mn.getDate()-5);mx.setDate(mx.getDate()+14);
+  days=[];const c=new Date(mn);while(c<=mx){days.push(new Date(c));c.setDate(c.getDate()+1);}
+}
+function dI(ds){const d=new Date(ds);d.setHours(0,0,0,0);return days.findIndex(g=>{const g2=new Date(g);g2.setHours(0,0,0,0);return g2.getTime()===d.getTime();});}
+
+function renderGantt(){
+  buildDays();
+  const dw=S.dw,today=new Date();today.setHours(0,0,0,0);
+  const phases=[...new Set(pT().map(t=>t.cat))];
+  let lh='',rh='';
+  if(!pT().length){
+    document.getElementById('gtL').innerHTML=`<div class="empty">Aucune tâche</div>`;
+    document.getElementById('gtR').innerHTML='';
+    return;
+  }
+  const tw=days.length*dw;
+  // Header months/days
+  const months=[];let cm=null;
+  days.forEach(d=>{const k=`${d.getFullYear()}-${d.getMonth()}`;if(!cm||cm.key!==k){cm={key:k,label:d.toLocaleDateString('fr-FR',{month:'short',year:'2-digit'}),cnt:0};months.push(cm);}cm.cnt++;});
+  let rHead=`<div style="position:sticky;top:0;z-index:5;background:var(--W);border-bottom:1px solid var(--B);width:${tw}px">`;
+  rHead+=`<div style="display:flex;border-bottom:1px solid var(--B);background:var(--A2)">`;
+  months.forEach(m=>rHead+=`<div style="width:${m.cnt*dw}px;font-family:var(--ff);font-weight:600;font-size:.4rem;letter-spacing:2px;text-transform:uppercase;color:var(--C3);padding:4px 5px;border-right:1px solid var(--B);text-align:center;flex-shrink:0">${m.label.toUpperCase()}</div>`);
+  rHead+=`</div><div style="display:flex">`;
+  days.forEach(d=>{const we=d.getDay()===0||d.getDay()===6,td=d.toDateString()===today.toDateString();rHead+=`<div style="width:${dw}px;font-family:var(--fm);font-size:.42rem;color:var(--C3);text-align:center;padding:2px 0;border-right:1px solid rgba(39,28,20,.05);flex-shrink:0;background:${td?'rgba(39,28,20,.09)':we?'rgba(39,28,20,.02)':'none'}">${d.getDate()}</div>`;});
+  rHead+=`</div></div>`;
+  let rRows=`<div style="position:relative;width:${tw}px">`;
+  const tI=dI(today.toISOString().split('T')[0]);
+  if(tI>=0)rRows+=`<div class="g-today" style="left:${tI*dw+dw/2}px"></div>`;
+  phases.forEach(ph=>{
+    const c=CC[ph]||'#888';
+    lh+=`<div class="gl-row ph"><span class="gl-ph" style="color:${c}">${ph}</span></div>`;
+    rRows+=`<div class="g-bar-row ph">`+days.map(d=>{const we=d.getDay()===0||d.getDay()===6;return`<div style="width:${dw}px;height:100%;border-right:1px solid rgba(39,28,20,.04);background:${we?'rgba(39,28,20,.015)':'none'};flex-shrink:0;display:inline-block"></div>`;}).join('')+`</div>`;
+    pT().filter(t=>t.cat===ph).forEach(t=>{
+      const sc=t.risk?'risk':t.status;
+      lh+=`<div class="gl-row"><div class="gdot ${sc}"></div><div class="gl-n">${t.name}</div></div>`;
+      const si=dI(t.start),ei=dI(t.end);
+      const od=new Date(t.end)<today&&t.status!=='done';
+      const bc=t.risk||od?'var(--RED)':t.status==='done'?'var(--GREEN)':c;
+      let bar='';
+      if(si>=0&&ei>=0){const bw=Math.max((ei-si+1)*dw,dw);bar=`<div class="gbar" style="left:${si*dw}px;width:${bw}px;background:${bc}BB" onclick="editTask(${t.id})"><div class="gbar-fill" style="width:${t.pct}%"></div><div class="gbar-lbl">${t.pct}%</div></div>`;}
+      rRows+=`<div class="g-bar-row">`+days.map(d=>{const we=d.getDay()===0||d.getDay()===6;return`<div style="width:${dw}px;height:100%;border-right:1px solid rgba(39,28,20,.04);background:${we?'rgba(39,28,20,.015)':'none'};flex-shrink:0;display:inline-block"></div>`;}).join('')+bar+`</div>`;
+    });
+  });
+  rRows+=`</div>`;
+  document.getElementById('gtL').innerHTML=lh;
+  document.getElementById('gtR').innerHTML=rHead+rRows;
+  requestAnimationFrame(()=>{const gr=document.getElementById('gtR');if(tI>=0)gr.scrollLeft=Math.max(0,tI*dw-gr.clientWidth/3);});
+}
+function setZoom(w,btn){S.dw=w;document.querySelectorAll('.pg-plan .btn-sm').forEach(b=>b.classList.add('btn-o'));btn.classList.remove('btn-o');renderGantt();}
+
+// ══ TASK LIST ══
+function renderTaskList(){
+  const today=new Date();today.setHours(0,0,0,0);
+  const dn=pT().filter(t=>t.status==='done').length,ip=pT().filter(t=>t.status==='inprogress').length;
+  const rk=pT().filter(t=>t.risk||(new Date(t.end)<today&&t.status!=='done')).length;
+  document.getElementById('task-stats').innerHTML=`
+    <div class="stat-c"><div class="sl">Réalisées</div><div class="sv g">${dn}</div><div class="sn">tâches</div></div>
+    <div class="stat-c"><div class="sl">En cours</div><div class="sv o">${ip}</div><div class="sn">actives</div></div>
+    <div class="stat-c"><div class="sl">À risque</div><div class="sv r">${rk}</div><div class="sn">alertes</div></div>
+    <div class="stat-c"><div class="sl">Total</div><div class="sv">${pT().length}</div><div class="sn">tâches</div></div>`;
+  const phases=[...new Set(pT().map(t=>t.cat))];
+  let h='';
+  phases.forEach(ph=>{
+    const c=CC[ph]||'#888';
+    h+=`<div class="sec-h" style="border-left:3px solid ${c}"><span class="sec-t">${ph}</span></div>`;
+    pT().filter(t=>t.cat===ph).forEach(t=>{
+      const sc=t.risk?'risk':t.status;
+      h+=`<div class="ti" onclick="editTask(${t.id})"><div class="ti-stripe" style="background:${c}"></div><div class="ti-body"><div class="ti-name">${t.name}</div><div class="ti-meta">${t.assignee||'—'} · ${fd(t.start)} → ${fd(t.end)}</div></div><div class="ti-pct" style="color:${t.status==='done'?'var(--GREEN)':t.risk?'var(--RED)':'var(--C3)'}">${t.pct}%</div></div>`;
+    });
+  });
+  document.getElementById('task-list').innerHTML=h||`<div class="empty">Aucune tâche</div>`;
+}
+
+// ══ COMPTE RENDU ══
+function renderCR(){
+  document.getElementById('cr-meta').innerHTML=`Projet : <strong>${S.projects[S.curP]?.name||'—'}</strong><br>Réunion N° — · ${new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'})}`;
+  // Intervenants
+  document.getElementById('cr-int').innerHTML=pM().length?pM().map(m=>`<div class="sl-item"><div class="sl-body"><div class="sl-theme">${m.name} — <span style="font-weight:400;font-size:.88em">${m.company||''}</span></div><div style="font-family:var(--fm);font-size:.56rem;color:var(--C3);margin-top:2px">${m.type} · ${m.present?'✓ Présent':'✗ Absent'}</div></div></div>`).join(''):`<div class="empty">—</div>`;
+  // Stat lines
+  document.getElementById('cr-stat').innerHTML=pSL().length?pSL().map(l=>`<div class="sl-item"><span class="rida ${l.rida}">${l.rida}</span><div class="sl-body" style="margin-left:6px"><div class="sl-theme">${l.theme}</div><div class="sl-det${l.urgent?' urg':''}">${l.detail}</div><span class="resp-tag">${l.resp}</span>${l.photos?.length?`<div style="display:flex;gap:4px;margin-top:5px;flex-wrap:wrap">${l.photos.map(p=>`<img class="photo-th" style="width:52px;height:52px;object-fit:cover;border:1px solid var(--B);cursor:zoom-in" src="${p}" onclick="showPh('${p}')">`).join('')}</div>`:''}<label style="font-family:var(--fm);font-size:.46rem;letter-spacing:1.5px;color:var(--C3);cursor:pointer;border:1px dashed var(--B2);padding:2px 6px;display:inline-block;margin-top:4px">+ Photo<input type="file" accept="image/*" style="display:none" onchange="addStPh(${l.id},this)"></label></div></div>`).join(''):`<div class="empty">—</div>`;
+  // Clefs
+  document.getElementById('cr-clefs').innerHTML=pC().length?pC().map(c=>`<div style="display:flex;gap:8px;align-items:flex-start;padding:10px 14px;border-bottom:1px solid var(--B);background:var(--W)"><div style="width:3px;height:3px;border-radius:50%;background:var(--RED);margin-top:9px;flex-shrink:0"></div><div style="font-family:var(--fm);font-size:.68rem;flex:1;color:${c.urgent?'var(--RED)':'var(--C)'};line-height:1.65"><strong>${c.ref}</strong> : ${c.text}</div></div>`).join(''):`<div class="empty">—</div>`;
+}
+function addStPh(id,inp){const l=S.statLines.find(x=>x.id===id);if(!l)return;if(!l.photos)l.photos=[];Array.from(inp.files).forEach(f=>{const r=new FileReader();r.onload=e=>{l.photos.push(e.target.result);renderCR();};r.readAsDataURL(f);});}
+function sendCR(){const mails=pM().filter(m=>m.email).map(m=>m.email);alert(`✉ CR envoyé J+1 à :\n${mails.join(', ')||'(aucun email)'}`);}
+
+// ══ COMMANDES ══
+function renderCmds(){
+  const pl={0:'Non',1:'Acompte',2:'Soldé'};
+  document.getElementById('cmd-list').innerHTML=pCmd().map(c=>`
+    <div class="cmd-card ${c.status}" onclick="openCPh(${c.id})">
+      <div class="cmd-n">${c.name}</div>
+      <div class="cmd-i">${c.fournisseur} · ${c.lot} · ${c.devis.toLocaleString('fr-FR')} € · ${pl[c.paid]}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <span class="cmd-st ${c.status}">${{cmd:'Commandé',att:'Attente',liv:'Livré',ret:'Retard'}[c.status]||c.status}</span>
+        <span style="font-family:var(--fm);font-size:.54rem;color:var(--C3)">Livr. ${fd(c.delivery)}</span>
+      </div>
+      ${c.photos?.length?`<div style="display:flex;gap:4px;margin-top:7px;flex-wrap:wrap">${c.photos.slice(0,4).map(p=>`<img style="width:48px;height:48px;object-fit:cover;border:1px solid var(--B);cursor:zoom-in" src="${p}" onclick="event.stopPropagation();showPh('${p}')">`).join('')}</div>`:''}
+    </div>`).join('')||`<div class="empty">Aucune commande</div>`;
+}
+function openCPh(id){S.curCmdId=id;/* open photo sheet */
+  const c=S.commandes.find(x=>x.id===id);if(!c)return;
+  const inp=prompt(`Ajouter une note de réception pour "${c.name}" :\n(Appuyez Annuler pour fermer)`,'');
+  if(inp===null)return;
+  c.status='liv';c.photoComment=inp||'';renderCmds();
+}
+
+// ══ STATS ══
+function updateStats(){
+  const today=new Date();today.setHours(0,0,0,0);
+  const dn=pT().filter(t=>t.status==='done').length;
+  const rks=pT().filter(t=>t.risk||(new Date(t.end)<today&&t.status!=='done'));
+  document.getElementById('ai-stats').innerHTML=`
+    <div class="stat-c"><div class="sl">Réalisées</div><div class="sv g">${dn}</div><div class="sn">tâches</div></div>
+    <div class="stat-c"><div class="sl">À risque</div><div class="sv r">${rks.length}</div><div class="sn">alertes</div></div>
+    <div class="stat-c"><div class="sl">Avancement</div><div class="sv o">${pT().length?Math.round(dn/pT().length*100):0}%</div><div class="sn">complétion</div></div>
+    <div class="stat-c"><div class="sl">Rapports</div><div class="sv">${S.reports.filter(r=>r.pi===S.curP).length}</div><div class="sn">semaine</div></div>`;
+  document.getElementById('rk-list').innerHTML=rks.length?rks.map(t=>`<div style="display:flex;gap:7px;padding:7px 0;border-bottom:1px solid rgba(39,28,20,.06)"><div style="width:2px;background:var(--RED);flex-shrink:0;min-height:12px;align-self:stretch"></div><div><div style="font-family:var(--ff);font-weight:500;font-size:.66rem">${t.name}</div><div style="font-family:var(--fm);font-size:.54rem;color:var(--C3);margin-top:1px">${t.assignee||'—'} · ${t.cat}</div></div></div>`).join(''):`<div class="empty">Aucune alerte</div>`;
+}
+
+// ══ MA JOURNÉE ══
+function renderDT(){
+  ['urgent','important','marie','waiting'].forEach(cat=>{
+    const el=document.getElementById('day-'+cat);if(!el)return;
+    const items=S.dayTasks[cat]||[];
+    const labels={urgent:'Urgent',important:'Important',marie:'Marie',waiting:'En attente'};
+    const cls={urgent:'u',important:'i',marie:'m',waiting:'w'};
+    const cnt=items.filter(t=>!t.done).length;
+    let h=`<div class="dy-ch"><span class="dy-cl ${cls[cat]}">${labels[cat]}</span><span class="dy-cnt">${cnt}</span></div>`;
+    h+=items.map(t=>`<div class="dt-i"><div class="dt-ck${t.done?(t.keep?' w':' d'):''}" onclick="togDT('${cat}','${t.id}')">${t.done?(t.keep?'↻':'✓'):''}</div><div style="flex:1"><div class="dt-tx${t.done&&!t.keep?' x':''}">${t.text}</div>${t.note?`<div class="dt-nt">${t.note}</div>`:''}</div><button class="dt-del" onclick="rmDT('${cat}','${t.id}')">✕</button></div>`).join('');
+    h+=`<div class="add-row"><input placeholder="Ajouter..." onkeydown="if(event.key==='Enter'&&this.value.trim()){addDT('${cat}',this.value);this.value=''}"><button class="add-row-btn" onclick="this.previousElementSibling.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter'}))">+</button></div>`;
+    el.innerHTML=h;
+  });
+}
+function togDT(cat,id){const t=S.dayTasks[cat]?.find(x=>x.id===id);if(!t)return;t.done=!t.done;renderDT();}
+function addDT(cat,text,keep=false){if(!S.dayTasks[cat])S.dayTasks[cat]=[];S.dayTasks[cat].push({id:'d'+S.nid++,text:text.trim(),done:false,keep,note:''});renderDT();}
+function rmDT(cat,id){S.dayTasks[cat]=(S.dayTasks[cat]||[]).filter(t=>t.id!==id);renderDT();}
+function saveQday(){const cat=document.getElementById('qd-cat').value,text=document.getElementById('qd-txt').value.trim(),keep=document.getElementById('qd-keep').value==='1';if(!text)return;addDT(cat,text,keep);closeSheet('qdaySheet');}
+
+// ══ CRUD ══
+let editId=null;
+function openAddTask(){editId=null;document.getElementById('task-sheet-t').textContent='Nouvelle Tâche';['t-n','t-notes'].forEach(i=>{const el=document.getElementById(i);if(el)el.value='';});document.getElementById('t-st').value='todo';document.getElementById('t-pct').value=0;const d=new Date().toISOString().split('T')[0];document.getElementById('t-s').value=d;const e=new Date();e.setDate(e.getDate()+14);document.getElementById('t-e').value=e.toISOString().split('T')[0];renderSels();openSheet('taskSheet');}
+function editTask(id){const t=S.tasks.find(x=>x.id===id);if(!t)return;editId=id;document.getElementById('task-sheet-t').textContent='Modifier';document.getElementById('t-n').value=t.name;document.getElementById('t-cat').value=t.cat;document.getElementById('t-asgn').value=t.assignee||'';document.getElementById('t-st').value=t.status;document.getElementById('t-pct').value=t.pct||0;document.getElementById('t-s').value=t.start;document.getElementById('t-e').value=t.end;document.getElementById('t-notes').value=t.notes||'';renderSels();openSheet('taskSheet');}
+function saveTask(){const n=document.getElementById('t-n').value.trim();if(!n)return;const d={name:n,cat:document.getElementById('t-cat').value,assignee:document.getElementById('t-asgn').value,status:document.getElementById('t-st').value,pct:parseInt(document.getElementById('t-pct').value)||0,start:document.getElementById('t-s').value,end:document.getElementById('t-e').value,notes:document.getElementById('t-notes').value};if(d.status==='done')d.pct=100;if(editId){const i=S.tasks.findIndex(x=>x.id===editId);S.tasks[i]={...S.tasks[i],...d};}else S.tasks.push({id:S.nid++,pi:S.curP,...d});closeSheet('taskSheet');renderAll();}
+function saveMemb(){const n=document.getElementById('m-n').value.trim();if(!n)return;S.members.push({id:S.nid++,pi:S.curP,name:n,role:document.getElementById('m-r').value,company:document.getElementById('m-c').value,tel:document.getElementById('m-t').value,email:document.getElementById('m-e').value,type:document.getElementById('m-tp').value,present:document.getElementById('m-pr').value==='1',invited:true});closeSheet('membSheet');renderCR();}
+function saveProj(){const n=document.getElementById('p-n').value.trim();if(!n)return;const clientMail=document.getElementById('p-client').value.trim().toLowerCase();const partnerMails=document.getElementById('p-partners').value.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);const proj={name:n,phase:document.getElementById('p-ph').value,pct:parseInt(document.getElementById('p-pct').value)||0,clientEmails:clientMail?[clientMail]:[],partnerEmails};S.projects.push(proj);closeSheet('projSheet');renderProjBar();}
+function saveStat(){const l={id:S.nid++,pi:S.curP,rida:document.getElementById('st-r').value,theme:document.getElementById('st-th').value,detail:document.getElementById('st-det').value,date:new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}),resp:document.getElementById('st-rsp').value,urgent:document.getElementById('st-urg').value==='1',photos:[]};S.statLines.push(l);Array.from(document.getElementById('st-ph').files).forEach(f=>{const r=new FileReader();r.onload=e=>{l.photos.push(e.target.result);};r.readAsDataURL(f);});closeSheet('statSheet');renderCR();}
+function saveClef(){S.clefs.push({id:S.nid++,pi:S.curP,ref:document.getElementById('cl-ref').value,text:document.getElementById('cl-txt').value,urgent:document.getElementById('cl-urg').value==='1'});closeSheet('clefSheet');renderCR();}
+function saveCmd(){S.commandes.push({id:S.nid++,pi:S.curP,name:document.getElementById('cmd-n').value,lot:document.getElementById('cmd-lot').value,fournisseur:document.getElementById('cmd-f').value,devis:parseFloat(document.getElementById('cmd-dv').value)||0,paid:parseInt(document.getElementById('cmd-pd').value)||0,delivery:document.getElementById('cmd-dl').value,status:document.getElementById('cmd-st').value,recept:document.getElementById('cmd-rcp').value,comment:document.getElementById('cmd-cm').value,photos:[],photoComment:''});closeSheet('cmdSheet');renderCmds();}
+
+// ══ SELECTS ══
+function renderSels(){['t-asgn','st-rsp','cmd-rcp'].forEach(id=>{const el=document.getElementById(id);if(!el)return;const v=el.value;el.innerHTML=`<option value="">—</option>`+pM().map(m=>`<option value="${m.company||m.name}">${m.name}${m.company?' ('+m.company+')':''}</option>`).join('');el.value=v;});const ip=document.getElementById('inv-proj');if(ip){ip.innerHTML=`<option value="">— Tous —</option>`+S.projects.map((p,i)=>`<option value="${i}">${p.name}</option>`).join('');}}
+
+// ══ ADMIN ══
+function renderAdminUsers(){
+  const users=getUsers();
+  document.getElementById('admin-users').innerHTML=users.length?users.map(u=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--B)"><div style="flex:1"><div style="font-family:var(--fm);font-size:.68rem;color:${u.active?'var(--C)':'var(--C3)'};text-decoration:${u.active?'none':'line-through'}">${u.email}</div><div style="font-family:var(--fm);font-size:.52rem;color:var(--C3);margin-top:1px">${u.role} · ${u.active?'Actif':'Révoqué'}</div></div>${u.active?`<button onclick="revokeUser('${u.email}')" style="font-family:var(--fm);font-size:.48rem;padding:4px 9px;border:1px solid var(--RED);background:none;color:var(--RED);cursor:pointer">Révoquer</button>`:`<button onclick="restoreUser('${u.email}')" style="font-family:var(--fm);font-size:.48rem;padding:4px 9px;border:1px solid var(--GREEN);background:none;color:var(--GREEN);cursor:pointer">Restaurer</button>`}</div>`).join(''):`<div class="empty" style="padding:8px 0">Aucun utilisateur connecté</div>`;}
+function revokeUser(email){if(!confirm(`Révoquer l'accès de ${email} ?`))return;const users=getUsers();const u=users.find(x=>x.email===email);if(u)u.active=false;saveUsers(users);renderAdminUsers();}
+function restoreUser(email){const users=getUsers();const u=users.find(x=>x.email===email);if(u)u.active=true;saveUsers(users);renderAdminUsers();}
+function inviteUser(){const email=document.getElementById('inv-email').value.trim().toLowerCase();if(!email||!email.includes('@'))return;const role=document.getElementById('inv-role').value;const projIdx=document.getElementById('inv-proj').value;const users=getUsers();if(!users.find(u=>u.email===email)){users.push({email,role,projIdx:projIdx?parseInt(projIdx):null,since:Date.now(),active:true});saveUsers(users);}document.getElementById('inv-ok').textContent=`✓ ${email} invité (${role})`;document.getElementById('inv-ok').style.display='block';document.getElementById('inv-email').value='';setTimeout(()=>document.getElementById('inv-ok').style.display='none',3000);renderAdminUsers();}
+
+// ══ AI ══
+async function callAI(prompt,outEl,spId,btnId,defTxt){
+  const sp=document.getElementById(spId),btn=document.getElementById(btnId);
+  if(sp)sp.style.display='inline-block';if(btn)btn.textContent='…';
+  const el=typeof outEl==='string'?document.getElementById(outEl):outEl;
+  if(el)el.textContent='';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1400,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const txt=data.content?.map(c=>c.text||'').join('')||'Erreur de génération.';
+    if(el){let i=0;const iv=setInterval(()=>{if(i<txt.length){el.textContent+=txt[i];i++;}else clearInterval(iv);},7);}
+    return txt;
+  }catch(e){if(el)el.textContent='Impossible de contacter l\'API IA.';return '';}
+  finally{if(sp)sp.style.display='none';if(btn)btn.textContent=defTxt;}
+}
+async function aiExtract(){
+  const notes=document.getElementById('cr-notes').value.trim();if(!notes){alert('Saisissez vos notes.');return;}
+  const sp=document.getElementById('sp-ext'),btn=document.getElementById('ext-t');
+  sp.style.display='inline-block';btn.textContent='…';
+  const prompt=`Extrais les tâches du chantier ${S.projects[S.curP]?.name} de ces notes. JSON UNIQUEMENT :[{"rida":"D|A|I","theme":"Lot","detail":"Description","resp":"Entreprise","urgent":true}]`;
+  try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:prompt+'\n\nNOTES:\n'+notes}]})});const data=await res.json();const raw=data.content?.map(c=>c.text||'').join('')||'[]';const tasks=JSON.parse(raw.replace(/```json|```/g,'').trim());const dt=new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});tasks.forEach(t=>S.statLines.push({id:S.nid++,pi:S.curP,rida:t.rida||'A',theme:t.theme||'—',detail:t.detail||'',date:dt,resp:t.resp||'—',urgent:!!t.urgent,photos:[]}));renderCR();alert(`✓ ${tasks.length} ligne(s) ajoutée(s).`);}catch(e){alert('Erreur d\'extraction.');}finally{sp.style.display='none';btn.textContent='Extraire tâches';}
+}
+async function aiGenCR(){
+  const notes=document.getElementById('cr-notes').value.trim();
+  const today=new Date(),ip=pT().filter(t=>t.status==='inprogress');
+  const prompt=`Tu es l'architecte M. Rivas, SARL TRI. Rédige un compte rendu de chantier professionnel pour ${S.projects[S.curP]?.name} du ${today.toLocaleDateString('fr-FR')}.\n${notes?'NOTES:\n'+notes+'\n':''}\nEN COURS: ${ip.map(t=>`${t.name}(${t.pct}%)`).join(', ')||'—'}\nPRÉSENTS: ${pM().filter(m=>m.present).map(m=>m.name+'/'+m.company).join(', ')||'—'}\n\nStructure: 1.CONTEXTE 2.AVANCEMENT PAR LOT 3.DÉCISIONS 4.ACTIONS 5.PROCHAINES ÉTAPES. Style sobre, architecte.`;
+  document.getElementById('cr-ai-out').style.display='block';
+  document.getElementById('cr-ai-tit').textContent='Compte Rendu';
+  await callAI(prompt,'cr-ai-txt','sp-cr','cr-t','Générer CR');
+}
+async function aiRisks(){
+  const today=new Date(),rks=pT().filter(t=>t.risk||(new Date(t.end)<today&&t.status!=='done'));
+  const prompt=`Agent IA Rivas Architecture. Analyse risques chantier ${S.projects[S.curP]?.name}.\nALERTES: ${rks.map(t=>`${t.name}(${t.assignee})`).join(', ')||'Aucun'}\nEN COURS: ${pT().filter(t=>t.status==='inprogress').map(t=>`${t.name}${t.pct}%`).join(', ')}\n1.RISQUES CRITIQUES 2.LEVIERS D'ACTION 3.SCÉNARIO WORST-CASE. Sois direct.`;
+  document.getElementById('cr-ai-out').style.display='block';
+  document.getElementById('cr-ai-tit').textContent='Risques';
+  await callAI(prompt,'cr-ai-txt','sp-rk','rk-t','Risques');
+}
+async function genReport(){
+  const today=new Date();today.setHours(0,0,0,0);
+  const dn=pT().filter(t=>t.status==='done'),rks=pT().filter(t=>t.risk||(new Date(t.end)<today&&t.status!=='done'));
+  const prompt=`Synthèse hebdomadaire IA — Rivas Architecture — ${S.projects[S.curP]?.name} — ${new Date().toLocaleDateString('fr-FR')}.\nAVANCEMENT: ${pT().length?Math.round(dn.length/pT().length*100):0}%(${dn.length}/${pT().length})\nEN COURS: ${pT().filter(t=>t.status==='inprogress').map(t=>`${t.name}${t.pct}%(${t.assignee})fin:${fd(t.end)}`).join('\n')}\nALERTES: ${rks.map(t=>`⚠${t.name}(${t.assignee})`).join('\n')||'Aucune'}\n\n1.BILAN SEMAINE 2.AVANCEMENT PAR LOT 3.ALERTES CRITIQUES 4.ACTIONS PRIORITAIRES 5.RECOMMANDATIONS. Style chef de projet senior.`;
+  await callAI(prompt,'ai-body','sp-rp','rp-t','Analyser');
+}
+async function aiDay(){
+  const input=document.getElementById('day-in').value.trim();if(!input)return;
+  const prompt=`Organise les tâches de l'architecte M. Rivas. JSON UNIQUEMENT: {"urgent":[],"important":[],"marie":[]}\nNOTES: ${input}`;
+  const sp=document.getElementById('sp-day'),btn=document.getElementById('day-btn');
+  sp.style.display='inline-block';btn.textContent='…';
+  try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})});const data=await res.json();const raw=data.content?.map(c=>c.text||'').join('')||'{}';const p=JSON.parse(raw.replace(/```json|```/g,'').trim());['urgent','important','marie'].forEach(cat=>(p[cat]||[]).forEach(t=>addDT(cat,t)));document.getElementById('day-in').value='';}catch(e){alert('Erreur.');}finally{sp.style.display='none';btn.textContent='Organiser';}
+}
+async function aiDaySumm(){
+  const all=Object.entries(S.dayTasks).flatMap(([cat,tasks])=>tasks.map(t=>({cat,t})));
+  const dn=all.filter(x=>x.t.done),pnd=all.filter(x=>!x.t.done);
+  const prompt=`Bilan fin de journée M.Rivas. Réalisé(${dn.length}): ${dn.map(x=>x.t.text).join(', ')||'Aucun'}. En attente(${pnd.length}): ${pnd.map(x=>x.t.text).join(', ')||'Aucun'}. Bilan 3 phrases + recommandation demain. Ton positif et professionnel.`;
+  const r=await callAI(prompt,null,'sp-day','day-btn','Bilan IA');
+  if(r)alert(r);
+}
+
+// ══ SHEETS & OVERLAYS ══
+function openSheet(id){document.getElementById(id).classList.add('on');if(id==='adminSheet'){renderAdminUsers();renderSels();}}
+function closeSheet(id){document.getElementById(id).classList.remove('on');}
+function openAM(){document.getElementById('am-bg').classList.add('on');document.getElementById('am-panel').classList.add('on');}
+function closeAM(){document.getElementById('am-bg').classList.remove('on');document.getElementById('am-panel').classList.remove('on');}
+function showPh(src){document.getElementById('phLbImg').src=src;document.getElementById('phLb').classList.add('on');}
+
+// ══ RENDER ALL ══
+function renderAll(){
+  renderGantt();
+  renderTaskList();
+  renderSels();
+  updateStats();
+  document.getElementById('tb-ctx').textContent=S.projects[S.curP]?.name||'—';
+  document.getElementById('day-proj').textContent=`${S.projects[S.curP]?.name||'—'} · ${S.projects[S.curP]?.phase||'—'}`;
+}
+
+// ══ INIT ══
+(function init(){
+  document.getElementById('day-date').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'long'}).toUpperCase();
+  // Auto-login if valid session exists
+  const saved=getSession();
+  if(saved){
+    // Verify user still active
+    const users=getUsers()
